@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
-import TreeTableDemo from '../components/TreeTableDemo';
+import TabbedTreeDemo from '../components/TabbedTreeDemo';
 
 const HomePage: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
       <Header title="Welcome to Thundracs" />
       <main style={{
         padding: '2rem',
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         margin: '0 auto',
       }}>
         <h2>Home Page</h2>
@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
         </ul>
 
         <div style={{ marginTop: '3rem' }}>
-          <TreeTableDemo />
+          <TabbedTreeDemo />
         </div>
       </main>
     </div>

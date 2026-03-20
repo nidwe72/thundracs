@@ -19,7 +19,11 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
-const TreeTableDemo = () => {
+interface TreeTableDemoProps {
+  onNodeSelect?: (nodeKey: string, nodeData: any) => void;
+}
+
+const TreeTableDemo: React.FC<TreeTableDemoProps> = ({ onNodeSelect }) => {
   const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
@@ -157,10 +161,31 @@ const TreeTableDemo = () => {
             <TreeTable 
               value={nodes} 
               scrollable 
-              scrollHeight="400px"
+              scrollHeight="300px"
               selectionMode="single"
               selectionKeys={selectedNodeKey}
-              onSelectionChange={(e) => setSelectedNodeKey(e.value as string)}
+              onSelectionChange={(e) => {
+                const selectedKey = e.value as string;
+                setSelectedNodeKey(selectedKey);
+                if (selectedKey && onNodeSelect) {
+                  // Find the selected node to get its data
+                  const findNode = (nodeList: TreeNode[]): TreeNode | null => {
+                    for (const node of nodeList) {
+                      if (node.key === selectedKey) return node;
+                      if (node.children) {
+                        const found = findNode(node.children);
+                        if (found) return found;
+                      }
+                    }
+                    return null;
+                  };
+                  
+                  const selectedNode = findNode(nodes);
+                  if (selectedNode) {
+                    onNodeSelect(selectedKey, selectedNode.data);
+                  }
+                }
+              }}
             >
               <Column 
                 field="name" 
