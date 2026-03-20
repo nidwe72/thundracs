@@ -1,71 +1,25 @@
 # Thundracs Application
 
+test
+
 A full-stack web application with Spring Boot backend and React frontend.
 
-## Project Structure
+## Features
 
-```
-project-name/
-├── backend/                 # Spring Boot application
-│   ├── src/main/java/      # Java source code (controllers, services, repositories)
-│   └── pom.xml             # Maven build configuration
-└── frontend/               # React application
-    ├── src/
-    │   ├── App.tsx
-    │   ├── components/     # Reusable React components
-    │   ├── pages/          # Page components
-    │   └── services/       # API communication logic
-    └── package.json
-```
+- **Spring Boot Backend**: REST API with CORS configuration
+- **React Frontend**: Modern React 19 with TypeScript and Vite
+- **Development Scripts**: Easy startup with `start-dev.sh` and verification with `verify-setup.sh`
+- **Node.js Compatibility**: Configured for Node.js v25.8.1 via fnm
+- **No Database Required**: JPA auto-configuration excluded for simplicity
 
-## Getting Started
+## Prerequisites
 
-### Backend (Spring Boot)
+- **Java 11+** (OpenJDK 11.0.25 recommended)
+- **Node.js 20+** (v25.8.1 recommended, installed via fnm)
+- **Maven 3.6+** (or use the provided Maven wrapper)
+- **fnm (Fast Node Manager)** for Node.js version management
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+## Quick Start
 
-2. Build and run the application:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-3. The backend will be available at `http://localhost:8080`
-
-### Frontend (React)
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. The frontend will be available at `http://localhost:5173` (or similar)
-
-## API Endpoints
-
-- `GET /api/hello` - Returns a greeting message from the backend
-
-## Development
-
-### Backend Structure
-- `controller/` - REST API controllers
-- `service/` - Business logic services
-- `repository/` - Data access layer
-- `model/` - Data models/entities
-
-### Frontend Structure
-- `components/` - Reusable UI components
-- `pages/` - Page-level components
-- `services/` - API communication services
+### 1. Verify Setup
+Run the verification script to check if everything is configured correctly:

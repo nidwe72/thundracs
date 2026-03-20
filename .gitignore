@@ -5,10 +5,7 @@ target/
 .kotlin
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -37,3 +34,13 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Project specific ###
+backend.log
+frontend.log
+.continueignore
+backend/.mvn/wrapper/maven-wrapper.jar
+frontend/package-lock.json
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
