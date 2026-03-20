@@ -3,13 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=25.8.1",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "dev": "vite",
+    "dev:nvm": "source $HOME/.nvm/nvm.sh && nvm use 25.8.1 && vite",
+    "dev:fnm": "export PATH=\"$HOME/.local/share/fnm/node-versions/v25.8.1/installation/bin:$PATH\" && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

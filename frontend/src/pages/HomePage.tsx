@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
+import TreeTableDemo from '../components/TreeTableDemo';
 
 const HomePage: React.FC = () => {
   return (
@@ -17,6 +18,10 @@ const HomePage: React.FC = () => {
           <li><strong>Backend:</strong> Spring Boot Java application</li>
           <li><strong>Frontend:</strong> React TypeScript application</li>
         </ul>
+
+        <div style={{ marginTop: '3rem' }}>
+          <TreeTableDemo />
+        </div>
       </main>
     </div>
   );

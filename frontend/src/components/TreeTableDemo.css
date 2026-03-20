@@ -1,0 +1,105 @@
+/* CSS to replace PrimeReact TreeTable default icons with plus/minus icons */
+
+/* Hide the default SVG icon */
+.custom-treetable-icons .p-treetable-toggler .p-treetable-toggler-icon {
+  display: none !important;
+}
+
+/* Create custom plus/minus icons using pseudo-elements */
+.custom-treetable-icons .p-treetable-toggler {
+  position: relative !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 8px !important;
+}
+
+.custom-treetable-icons .p-treetable-toggler::before {
+  content: '+' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f5f5f5 !important;
+  border: 2px solid #424242 !important;
+  border-radius: 0 !important;
+  color: #424242 !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+/* Change to minus when expanded */
+.custom-treetable-icons .p-treetable-toggler.p-treetable-toggler-open::before {
+  content: '−' !important;
+  background-color: #e0e0e0 !important;
+  border-color: #212121 !important;
+  color: #212121 !important;
+}
+
+/* Add hover effects */
+.custom-treetable-icons .p-treetable-toggler:hover::before {
+  background-color: #eeeeee !important;
+}
+
+.custom-treetable-icons .p-treetable-toggler.p-treetable-toggler-open:hover::before {
+  background-color: #d5d5d5 !important;
+}
+
+/* Ensure the button has no default styles that interfere */
+.custom-treetable-icons .p-treetable-toggler.p-link {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove focus outline from TreeTable toggler */
+.custom-treetable-icons .p-treetable-toggler.p-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Make sure the button is visible */
+.custom-treetable-icons .p-treetable-toggler {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Remove rounded corners from TreeTable */
+.custom-treetable-icons .p-treetable {
+  border-radius: 0 !important;
+}
+
+.custom-treetable-icons .p-treetable .p-treetable-thead > tr > th {
+  border-radius: 0 !important;
+}
+
+.custom-treetable-icons .p-treetable .p-treetable-tbody > tr > td {
+  border-radius: 0 !important;
+}
+
+/* Style for selected row - blue border */
+.custom-treetable-icons .p-treetable .p-treetable-tbody > tr.p-highlight {
+  border: 2px solid #2196F3 !important;
+  border-radius: 0 !important;
+}
+
+.custom-treetable-icons .p-treetable .p-treetable-tbody > tr.p-highlight > td {
+  background-color: #f0f8ff !important;
+}
+
+/* Style for focused row (keyboard navigation) - make it look like selected row */
+.custom-treetable-icons .p-treetable .p-treetable-tbody > tr.p-focus {
+  border: 2px solid #2196F3 !important;
+  border-radius: 0 !important;
+}
+
+.custom-treetable-icons .p-treetable .p-treetable-tbody > tr.p-focus > td {
+  background-color: #f0f8ff !important;
+}
