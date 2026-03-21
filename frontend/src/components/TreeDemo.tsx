@@ -90,9 +90,9 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
   onCollapseAll
 }) => {
   return (
-    <div className="flex justify-between items-center w-full">
+    <div className="flex justify-between items-center w-full h-full">
       {/* Title on left */}
-      <span className="font-semibold">{title}</span>
+      <span className="font-semibold flex-1">{title}</span>
       
       {/* Icons on right */}
       <div className="flex space-x-2">
@@ -389,8 +389,8 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
         </div>
       </div>
 
-      <div className="border border-gray-300 rounded-lg overflow-hidden" style={{ minHeight: '500px' }}>
-        <Splitter style={{ height: '100%' }}>
+      <div className="overflow-hidden" style={{ minHeight: '500px' }}>
+        <Splitter style={{ height: '100%', border: 'none' }}>
           {/* Left panel - Tree */}
           <SplitterPanel className="flex flex-col" size={60} minSize={30}>
             <Panel 
@@ -454,7 +454,7 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
           </SplitterPanel>
           
           {/* Right panel - Selected Node Info */}
-          <SplitterPanel className="flex flex-col border-l border-gray-200" size={40} minSize={20}>
+          <SplitterPanel className="flex flex-col" size={40} minSize={20}>
             <Panel 
               header="Config node" 
               className="h-full flex flex-column border-none"

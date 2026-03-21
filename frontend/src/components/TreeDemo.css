@@ -76,6 +76,38 @@
     width: 100% !important;
 }
 
+/* Splitter adjustments to remove gaps between panels */
+.p-splitter {
+    border: none !important;
+}
+
+.p-splitter-gutter {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.p-splitter-gutter-handle {
+    background-color: #e5e7eb !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure panels take full height */
+.p-splitter-panel {
+    overflow: hidden !important;
+}
+
+/* Remove border from panels when in splitter */
+.p-splitter .p-panel {
+    border: none !important;
+    height: 100% !important;
+}
+
+.p-splitter .p-panel .p-panel-content {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
 /* Filter styling */
 .p-tree .p-tree-filter-container {
     margin-bottom: 0.75rem !important;
