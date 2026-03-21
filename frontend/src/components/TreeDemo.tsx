@@ -90,12 +90,13 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
   onCollapseAll
 }) => {
   return (
-    <div className="flex justify-between items-center w-full h-full">
-      {/* Title on left */}
-      <span className="font-semibold flex-1">{title}</span>
-      
-      {/* Icons on right */}
-      <div className="flex space-x-2">
+    <div className="w-full">
+      <div className="flex justify-between items-center">
+        {/* Title on left */}
+        <span className="font-semibold">{title}</span>
+        
+        {/* Icons on right */}
+        <div className="flex space-x-2 ml-auto">
         {showExpandIcon && (
           <button
             onClick={onExpandAll}
@@ -115,6 +116,7 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
             <i className="pi pi-minus"></i>
           </button>
         )}
+        </div>
       </div>
     </div>
   );
@@ -389,8 +391,8 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
         </div>
       </div>
 
-      <div className="overflow-hidden" style={{ minHeight: '500px' }}>
-        <Splitter style={{ height: '100%', border: 'none' }}>
+      <div className="overflow-hidden tree-demo-container" style={{ minHeight: '500px' }}>
+        <Splitter style={{ height: '100%', border: 'none', margin: 0, padding: 0 }}>
           {/* Left panel - Tree */}
           <SplitterPanel className="flex flex-col" size={60} minSize={30}>
             <Panel 
