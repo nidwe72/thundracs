@@ -15,13 +15,55 @@ interface TreeNode {
   data?: any;
 }
 
+interface TreeDemoConfig {
+  // Button visibility controls
+  showExpandAllButton?: boolean;
+  showCollapseAllButton?: boolean;
+  
+  // Icon configuration
+  usePlusMinusIcons?: boolean;
+  
+  // Data configuration (future extensibility)
+  maxNodes?: number;
+  levels?: number;
+  
+  // UI configuration (future extensibility)
+  showFilter?: boolean;
+  showNodeDetails?: boolean;
+  showRandomMessage?: boolean;
+}
+
 interface TreeDemoProps {
   onNodeSelect?: (nodeKey: string, nodeLabel: string) => void;
+  config?: TreeDemoConfig | Partial<TreeDemoConfig>;
+  // Optional: Allow custom data injection
+  nodes?: TreeNode[];
 }
 
 
 
-const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
+// Default configuration
+const defaultConfig: TreeDemoConfig = {
+  showExpandAllButton: true,
+  showCollapseAllButton: true,
+  usePlusMinusIcons: true,
+  showFilter: true,
+  showNodeDetails: true,
+  showRandomMessage: true
+};
+
+// Helper function to merge user config with defaults
+const mergeConfig = (userConfig?: Partial<TreeDemoConfig>): TreeDemoConfig => {
+  return { ...defaultConfig, ...userConfig };
+};
+
+const TreeDemo: React.FC<TreeDemoProps> = ({ 
+  onNodeSelect, 
+  config: userConfig,
+  nodes: externalNodes 
+}) => {
+  // Merge configuration
+  const config = mergeConfig(userConfig);
   const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
@@ -184,7 +226,7 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
     // Simulate loading data
     console.log('Starting tree data generation...');
     setTimeout(() => {
-      const data = generateTreeData();
+      const data = externalNodes || generateTreeData();
       setNodes(data);
       
       // Expand all nodes by default
@@ -203,7 +245,7 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
       setLoading(false);
       console.log('Tree data loaded');
     }, 500);
-  }, []);
+  }, [externalNodes]);
 
   const nodeTemplate = (node: any) => {
     const treeNode = node as TreeNode;
@@ -232,12 +274,17 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
       return <div style={{ width: '1.25rem', marginRight: '0.375rem' }}></div>;
     }
     
+    // Use plus/minus icons if config.usePlusMinusIcons is true, otherwise use default chevron icons
+    const iconClass = config.usePlusMinusIcons 
+      ? (isExpanded ? 'pi-minus' : 'pi-plus')
+      : (isExpanded ? 'pi-chevron-down' : 'pi-chevron-right');
+    
     return (
       <button 
         className="p-tree-toggler p-link custom-tree-toggler"
         onClick={options.onClick}
       >
-        <i className={`pi ${isExpanded ? 'pi-minus' : 'pi-plus'}`} style={{ fontSize: '0.75rem' }}></i>
+        <i className={`pi ${iconClass}`} style={{ fontSize: '0.75rem' }}></i>
       </button>
     );
   };
@@ -280,38 +327,45 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
                   </div>
                 ) : (
                   <>
-                    <div className="mb-4 flex justify-between items-center">
-                      <div>
-                        <button 
-                          className="p-2 bg-blue-500 text-white rounded mr-2 hover:bg-blue-600"
-                          onClick={() => {
-                            // Expand all
-                            const allKeys: { [key: string]: boolean } = {};
-                            const expandAll = (nodeList: TreeNode[]) => {
-                              nodeList.forEach(node => {
-                                allKeys[node.key] = true;
-                                if (node.children && node.children.length > 0) {
-                                  expandAll(node.children);
-                                }
-                              });
-                            };
-                            expandAll(nodes);
-                            setExpandedKeys(allKeys);
-                          }}
-                        >
-                          <i className="pi pi-plus mr-1"></i> Expand All
-                        </button>
-                        <button 
-                          className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                          onClick={() => setExpandedKeys({})}
-                        >
-                          <i className="pi pi-minus mr-1"></i> Collapse All
-                        </button>
+                    {/* Conditional button rendering based on config */}
+                    {(config.showExpandAllButton || config.showCollapseAllButton) && (
+                      <div className="mb-4 flex justify-between items-center">
+                        <div>
+                          {config.showExpandAllButton && (
+                            <button 
+                              className="p-2 bg-blue-500 text-white rounded mr-2 hover:bg-blue-600"
+                              onClick={() => {
+                                // Expand all
+                                const allKeys: { [key: string]: boolean } = {};
+                                const expandAll = (nodeList: TreeNode[]) => {
+                                  nodeList.forEach(node => {
+                                    allKeys[node.key] = true;
+                                    if (node.children && node.children.length > 0) {
+                                      expandAll(node.children);
+                                    }
+                                  });
+                                };
+                                expandAll(nodes);
+                                setExpandedKeys(allKeys);
+                              }}
+                            >
+                              <i className="pi pi-plus mr-1"></i> Expand All
+                            </button>
+                          )}
+                          {config.showCollapseAllButton && (
+                            <button 
+                              className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                              onClick={() => setExpandedKeys({})}
+                            >
+                              <i className="pi pi-minus mr-1"></i> Collapse All
+                            </button>
+                          )}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {Object.keys(expandedKeys).length} nodes expanded
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-600">
-                        {Object.keys(expandedKeys).length} nodes expanded
-                      </div>
-                    </div>
+                    )}
                     
                     <div className="flex-1 overflow-auto">
                       <Tree 
@@ -338,8 +392,8 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
                         nodeTemplate={nodeTemplate}
                         togglerTemplate={togglerTemplate}
                         className="w-full"
-                        filter
-                        filterPlaceholder="Search nodes..."
+                        filter={config.showFilter}
+                        filterPlaceholder={config.showFilter ? "Search nodes..." : undefined}
                       />
                     </div>
                   </>
@@ -379,25 +433,27 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
                     )}
                   </div>
                   
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Random Message:</h4>
-                    {randomMessage ? (
-                      <div className="p-3 bg-green-50 rounded">
-                        <p className="text-sm text-gray-700">{randomMessage}</p>
-                        <p className="text-xs text-gray-500 mt-2 italic">
-                          A new random message appears each time you select a node
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="p-3 bg-gray-50 rounded text-gray-500">
-                        <div className="flex items-center">
-                          <i className="pi pi-comment mr-2"></i>
-                          <span>No message yet</span>
+                  {config.showRandomMessage && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Random Message:</h4>
+                      {randomMessage ? (
+                        <div className="p-3 bg-green-50 rounded">
+                          <p className="text-sm text-gray-700">{randomMessage}</p>
+                          <p className="text-xs text-gray-500 mt-2 italic">
+                            A new random message appears each time you select a node
+                          </p>
                         </div>
-                        <p className="text-xs mt-1">Select a node to generate a random message</p>
-                      </div>
-                    )}
-                  </div>
+                      ) : (
+                        <div className="p-3 bg-gray-50 rounded text-gray-500">
+                          <div className="flex items-center">
+                            <i className="pi pi-comment mr-2"></i>
+                            <span>No message yet</span>
+                          </div>
+                          <p className="text-xs mt-1">Select a node to generate a random message</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   <div>
                     <h4 className="font-semibold text-gray-700 mb-2">Simple Text Display:</h4>
@@ -407,38 +463,40 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
                     </div>
                   </div>
                   
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Node Details:</h4>
-                    {selectedNodeKey ? (
-                      <div className="p-3 bg-gray-50 rounded">
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div className="text-gray-600">Node Key:</div>
-                          <div className="font-mono text-right">{selectedNodeKey}</div>
-                          
-                          <div className="text-gray-600">Node Type:</div>
-                          <div className="text-right">
-                            {selectedNodeKey.includes('root-') && !selectedNodeKey.includes('child') ? (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Root Node</span>
-                            ) : selectedNodeKey.includes('child-') && !selectedNodeKey.includes('grandchild') ? (
-                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Child Node</span>
-                            ) : (
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Grandchild Node</span>
-                            )}
-                          </div>
-                          
-                          <div className="text-gray-600">Level:</div>
-                          <div className="text-right font-bold">
-                            {selectedNodeKey.includes('root-') && !selectedNodeKey.includes('child') ? '1' : 
-                             selectedNodeKey.includes('child-') && !selectedNodeKey.includes('grandchild') ? '2' : '3'}
+                  {config.showNodeDetails && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Node Details:</h4>
+                      {selectedNodeKey ? (
+                        <div className="p-3 bg-gray-50 rounded">
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="text-gray-600">Node Key:</div>
+                            <div className="font-mono text-right">{selectedNodeKey}</div>
+                            
+                            <div className="text-gray-600">Node Type:</div>
+                            <div className="text-right">
+                              {selectedNodeKey.includes('root-') && !selectedNodeKey.includes('child') ? (
+                                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Root Node</span>
+                              ) : selectedNodeKey.includes('child-') && !selectedNodeKey.includes('grandchild') ? (
+                                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Child Node</span>
+                              ) : (
+                                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Grandchild Node</span>
+                              )}
+                            </div>
+                            
+                            <div className="text-gray-600">Level:</div>
+                            <div className="text-right font-bold">
+                              {selectedNodeKey.includes('root-') && !selectedNodeKey.includes('child') ? '1' : 
+                               selectedNodeKey.includes('child-') && !selectedNodeKey.includes('grandchild') ? '2' : '3'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="p-3 bg-gray-50 rounded text-gray-500 text-center">
-                        Select a node to see detailed information
-                      </div>
-                    )}
-                  </div>
+                      ) : (
+                        <div className="p-3 bg-gray-50 rounded text-gray-500 text-center">
+                          Select a node to see detailed information
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </Panel>
