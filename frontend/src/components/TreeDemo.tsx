@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Tree } from 'primereact/tree';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Panel } from 'primereact/panel';
+import { Ripple } from 'primereact/ripple';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -12,7 +13,13 @@ interface TreeNode {
   label: string;
   coding: string; // Unique ID
   children?: TreeNode[];
-  data?: any;
+  data?: Record<string, unknown>;
+  // PrimeReact TreeNode compatibility
+  id?: string;
+  icon?: string;
+  expanded?: boolean;
+  selectable?: boolean;
+  leaf?: boolean;
 }
 
 interface TreeDemoConfig {
@@ -28,8 +35,11 @@ interface TreeDemoConfig {
   showNodeDetails?: boolean;
   showRandomMessage?: boolean;
   
-  // Future extensibility
+  // Title configuration
   title?: string;                 // Custom panel title
+  
+  // Icon styling
+  iconSpacing?: number;          // Space between icons in pixels
   iconSize?: 'small' | 'medium' | 'large';
   iconColor?: string;
 }
@@ -45,13 +55,14 @@ interface TreeDemoProps {
 
 // Default configuration
 const defaultConfig: TreeDemoConfig = {
-  showExpandAllIcon: true,
-  showCollapseAllIcon: true,
+  showExpandAllIcon: false,      // Expand icon HIDDEN by default
+  showCollapseAllIcon: true,     // Collapse icon VISIBLE by default
   usePlusMinusIcons: true,
   showFilter: true,
   showNodeDetails: true,
   showRandomMessage: true,
-  title: 'Config tree'
+  title: 'Config tree',
+  iconSpacing: 8 // pixels between icons
 };
 
 // Helper function to merge user config with defaults
@@ -60,64 +71,88 @@ const mergeConfig = (userConfig?: Partial<TreeDemoConfig>): TreeDemoConfig => {
   
   // Handle backward compatibility: map old property names to new ones
   // This allows users to still use the old config properties
-  const anyConfig = userConfig as any;
-  if (anyConfig) {
-    if (anyConfig.showExpandAllButton !== undefined && merged.showExpandAllIcon === defaultConfig.showExpandAllIcon) {
-      merged.showExpandAllIcon = anyConfig.showExpandAllButton;
+  if (userConfig) {
+    const configWithAny = userConfig as Record<string, unknown>;
+    if (configWithAny.showExpandAllButton !== undefined && merged.showExpandAllIcon === defaultConfig.showExpandAllIcon) {
+      merged.showExpandAllIcon = configWithAny.showExpandAllButton as boolean;
     }
-    if (anyConfig.showCollapseAllButton !== undefined && merged.showCollapseAllIcon === defaultConfig.showCollapseAllIcon) {
-      merged.showCollapseAllIcon = anyConfig.showCollapseAllButton;
+    if (configWithAny.showCollapseAllButton !== undefined && merged.showCollapseAllIcon === defaultConfig.showCollapseAllIcon) {
+      merged.showCollapseAllIcon = configWithAny.showCollapseAllButton as boolean;
     }
   }
   
   return merged;
 };
 
-// Title bar component with icons
-interface TitleBarProps {
-  title: string;
+// Helper function to find a node by key
+const findNodeByKey = (key: string, nodeList: TreeNode[]): TreeNode | null => {
+  for (const node of nodeList) {
+    if (node.key === key) return node;
+    if (node.children) {
+      const found = findNodeByKey(key, node.children);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// Helper function to find parent of a node
+const findParentNode = (childKey: string, nodeList: TreeNode[], parent: TreeNode | null = null): TreeNode | null => {
+  for (const node of nodeList) {
+    if (node.key === childKey) return parent;
+    if (node.children) {
+      const found = findParentNode(childKey, node.children, node);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// Custom icons component for Panel header
+interface PanelIconsProps {
   showExpandIcon: boolean;
   showCollapseIcon: boolean;
   onExpandAll: () => void;
   onCollapseAll: () => void;
+  iconSpacing?: number;
 }
 
-const TitleBarWithIcons: React.FC<TitleBarProps> = ({
-  title,
+const PanelIcons: React.FC<PanelIconsProps> = ({
   showExpandIcon,
   showCollapseIcon,
   onExpandAll,
-  onCollapseAll
+  onCollapseAll,
+  iconSpacing = 8
 }) => {
   return (
-    <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
-      {/* Title on left */}
-      <span className="font-semibold" style={{ flex: 1 }}>{title}</span>
+    <div className="flex align-items-center h-full" style={{ gap: `${iconSpacing}px` }}>
+      {showExpandIcon && (
+        <button 
+          className="p-panel-header-icon p-link" 
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent panel toggle when clicking icons
+            onExpandAll();
+          }}
+          title="Expand All"
+        >
+          <i className="pi pi-plus"></i>
+          <Ripple />
+        </button>
+      )}
       
-      {/* Icons container absolutely positioned to right */}
-      <div style={{ position: 'absolute', right: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        {showExpandIcon && (
-          <button
-            onClick={onExpandAll}
-            className="title-bar-icon-btn"
-            title="Expand All"
-            style={{ margin: 0 }}
-          >
-            <i className="pi pi-plus"></i>
-          </button>
-        )}
-        
-        {showCollapseIcon && (
-          <button
-            onClick={onCollapseAll}
-            className="title-bar-icon-btn"
-            title="Collapse All"
-            style={{ margin: 0 }}
-          >
-            <i className="pi pi-minus"></i>
-          </button>
-        )}
-      </div>
+      {showCollapseIcon && (
+        <button 
+          className="p-panel-header-icon p-link" 
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent panel toggle when clicking icons
+            onCollapseAll();
+          }}
+          title="Collapse All"
+        >
+          <i className="pi pi-minus"></i>
+          <Ripple />
+        </button>
+      )}
     </div>
   );
 };
@@ -232,72 +267,42 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
     return messages[randomIndex];
   };
 
-  // Helper function to find a node by key
-  const findNodeByKey = (key: string, nodeList: TreeNode[]): TreeNode | null => {
-    for (const node of nodeList) {
-      if (node.key === key) return node;
-      if (node.children) {
-        const found = findNodeByKey(key, node.children);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  
 
-  // Helper function to find parent of a node
-  const findParentNode = (childKey: string, nodeList: TreeNode[], parent: TreeNode | null = null): TreeNode | null => {
-    for (const node of nodeList) {
-      if (node.key === childKey) return parent;
-      if (node.children) {
-        const found = findParentNode(childKey, node.children, node);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
 
-  // Helper function to get the full path of codings from root to node
-  const getNodePath = (nodeKey: string): { nodeCoding: string; parentCoding?: string; fullPath: string[] } | null => {
-    const node = findNodeByKey(nodeKey, nodes);
-    if (!node) return null;
-
-    const parent = findParentNode(nodeKey, nodes);
-    const fullPath: string[] = [];
-    
-    // Build path from root to node
-    let currentKey = nodeKey;
-    while (currentKey) {
-      const currentNode = findNodeByKey(currentKey, nodes);
-      if (currentNode) {
-        fullPath.unshift(currentNode.coding);
-        const currentParent = findParentNode(currentKey, nodes);
-        currentKey = currentParent ? currentParent.key : '';
-      } else {
-        break;
-      }
-    }
-    
-    return {
-      nodeCoding: node.coding,
-      parentCoding: parent ? parent.coding : undefined,
-      fullPath
-    };
-  };
-
-  // Handle Enter key press on selected node
-  const handleEnterKey = () => {
-    if (selectedNodeKey) {
-      const path = getNodePath(selectedNodeKey);
-      console.log('Enter pressed on node:', selectedNodeKey);
-      console.log('Node path:', path);
-    }
-  };
 
   // Handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && selectedNodeKey) {
-        handleEnterKey();
+        // Handle Enter key press on selected node
+        const node = findNodeByKey(selectedNodeKey, nodes);
+        if (!node) return;
+
+        const parent = findParentNode(selectedNodeKey, nodes);
+        const fullPath: string[] = [];
+        
+        // Build path from root to node
+        let currentKey = selectedNodeKey;
+        while (currentKey) {
+          const currentNode = findNodeByKey(currentKey, nodes);
+          if (currentNode) {
+            fullPath.unshift(currentNode.coding);
+            const currentParent = findParentNode(currentKey, nodes);
+            currentKey = currentParent ? currentParent.key : '';
+          } else {
+            break;
+          }
+        }
+        
+        const path = {
+          nodeCoding: node.coding,
+          parentCoding: parent ? parent.coding : undefined,
+          fullPath
+        };
+        
+        console.log('Enter pressed on node:', selectedNodeKey);
+        console.log('Node path:', path);
       }
     };
 
@@ -332,6 +337,7 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
     }, 500);
   }, [externalNodes]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nodeTemplate = (node: any) => {
     const treeNode = node as TreeNode;
     const isSelected = selectedNodeKey === treeNode.key;
@@ -350,6 +356,7 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
   };
 
   // Custom toggler template for plus/minus icons
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const togglerTemplate = (node: any, options: any) => {
     const treeNode = node as TreeNode;
     const hasChildren = treeNode.children && treeNode.children.length > 0;
@@ -396,13 +403,14 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
           {/* Left panel - Tree */}
           <SplitterPanel className="flex flex-col" size={60} minSize={30}>
             <Panel 
-              header={
-                <TitleBarWithIcons
-                  title={config.title || 'Config tree'}
+              header={config.title || 'Config tree'}
+              icons={
+                <PanelIcons
                   showExpandIcon={config.showExpandAllIcon || false}
                   showCollapseIcon={config.showCollapseAllIcon || false}
                   onExpandAll={handleExpandAll}
                   onCollapseAll={handleCollapseAll}
+                  iconSpacing={config.iconSpacing}
                 />
               }
               className="h-full flex flex-column border-none"
