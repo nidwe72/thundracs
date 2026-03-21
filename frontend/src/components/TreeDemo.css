@@ -70,53 +70,14 @@
 /* Panel header adjustments for title bar icons */
 .p-panel .p-panel-header {
     padding: 1rem !important;
+    position: relative !important;
 }
 
 .p-panel .p-panel-header .p-panel-header-content {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
     width: 100% !important;
-    gap: 0 !important;
-}
-
-/* Force the custom header content to take full width and use flex */
-.p-panel .p-panel-header .p-panel-header-content > div {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    flex: 1 !important;
-}
-
-/* Force PrimeReact Panel to display our header content correctly */
-.p-panel .p-panel-header .p-panel-header-content {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-}
-
-/* Make sure any div inside the header content takes full width */
-.p-panel .p-panel-header .p-panel-header-content > div {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-/* Specific styling for our panel title bar */
-.panel-title-bar {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-}
-
-.panel-title-bar > span {
-    flex: 1 !important;
-}
-
-/* Ensure icons are pushed to the right */
-.icons-container-right {
-    margin-left: auto !important;
+    position: relative !important;
 }
 
 /* Splitter adjustments to remove gaps between panels */

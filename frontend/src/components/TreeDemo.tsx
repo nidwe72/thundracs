@@ -90,12 +90,12 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
   onCollapseAll
 }) => {
   return (
-    <div className="panel-title-bar" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+    <div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
       {/* Title on left */}
       <span className="font-semibold" style={{ flex: 1 }}>{title}</span>
       
-      {/* Icons container aligned to right */}
-      <div className="icons-container-right" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      {/* Icons container absolutely positioned to right */}
+      <div style={{ position: 'absolute', right: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {showExpandIcon && (
           <button
             onClick={onExpandAll}
