@@ -93,7 +93,6 @@
 .p-panel .p-panel-header .p-panel-header-content {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
     width: 100% !important;
 }
 
@@ -102,7 +101,6 @@
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
 }
 
 /* Specific styling for our panel title bar */
@@ -116,8 +114,8 @@
     flex: 1 !important;
 }
 
-/* Ensure icons are aligned to the far right */
-.panel-title-bar > div:last-child {
+/* Ensure icons are pushed to the right */
+.icons-container-right {
     margin-left: auto !important;
 }
 

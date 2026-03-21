@@ -95,7 +95,7 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
       <span className="font-semibold" style={{ flex: 1 }}>{title}</span>
       
       {/* Icons container aligned to right */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="icons-container-right" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {showExpandIcon && (
           <button
             onClick={onExpandAll}
