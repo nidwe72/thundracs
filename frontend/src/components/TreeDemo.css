@@ -109,12 +109,16 @@
 .panel-title-bar {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
     width: 100% !important;
 }
 
 .panel-title-bar > span {
     flex: 1 !important;
+}
+
+/* Ensure icons are aligned to the far right */
+.panel-title-bar > div:last-child {
+    margin-left: auto !important;
 }
 
 /* Splitter adjustments to remove gaps between panels */

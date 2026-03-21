@@ -90,17 +90,18 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
   onCollapseAll
 }) => {
   return (
-    <div className="panel-title-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <div className="panel-title-bar" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
       {/* Title on left */}
       <span className="font-semibold" style={{ flex: 1 }}>{title}</span>
       
-      {/* Icons on right */}
-      <div className="flex space-x-2">
+      {/* Icons container aligned to right */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {showExpandIcon && (
           <button
             onClick={onExpandAll}
             className="title-bar-icon-btn"
             title="Expand All"
+            style={{ margin: 0 }}
           >
             <i className="pi pi-plus"></i>
           </button>
@@ -111,6 +112,7 @@ const TitleBarWithIcons: React.FC<TitleBarProps> = ({
             onClick={onCollapseAll}
             className="title-bar-icon-btn"
             title="Collapse All"
+            style={{ margin: 0 }}
           >
             <i className="pi pi-minus"></i>
           </button>
