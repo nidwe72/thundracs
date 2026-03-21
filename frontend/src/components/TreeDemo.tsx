@@ -210,20 +210,35 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
     const isSelected = selectedNodeKey === treeNode.key;
     
     return (
-      <div 
-        className={`p-1 ${isSelected ? 'bg-blue-100' : ''} hover:bg-gray-100 rounded cursor-pointer`}
-        onClick={() => {
-          setSelectedNodeKey(treeNode.key);
-          setRandomMessage(generateRandomMessage());
-          if (onNodeSelect) {
-            onNodeSelect(treeNode.key, treeNode.label);
-          }
-        }}
-      >
-        <div className="font-mono text-sm" title={treeNode.coding}>
-          {treeNode.coding}
+      <div className="flex items-center">
+        <div 
+          className={`p-1 flex-1 ${isSelected ? 'bg-blue-100' : ''} hover:bg-gray-100 rounded cursor-pointer`}
+        >
+          <div className="font-mono text-sm" title={treeNode.coding}>
+            {treeNode.coding}
+          </div>
         </div>
       </div>
+    );
+  };
+
+  // Custom toggler template for plus/minus icons
+  const togglerTemplate = (node: any, options: any) => {
+    const treeNode = node as TreeNode;
+    const hasChildren = treeNode.children && treeNode.children.length > 0;
+    const isExpanded = options.expanded;
+    
+    if (!hasChildren) {
+      return <div style={{ width: '1.25rem', marginRight: '0.375rem' }}></div>;
+    }
+    
+    return (
+      <button 
+        className="p-tree-toggler p-link custom-tree-toggler"
+        onClick={options.onClick}
+      >
+        <i className={`pi ${isExpanded ? 'pi-minus' : 'pi-plus'}`} style={{ fontSize: '0.75rem' }}></i>
+      </button>
     );
   };
 
@@ -313,11 +328,15 @@ const TreeDemo: React.FC<TreeDemoProps> = ({ onNodeSelect }) => {
                             if (selectedNode && onNodeSelect) {
                               onNodeSelect(selectedKey, selectedNode.label);
                             }
+                          } else {
+                            // Clear the random message when no node is selected
+                            setRandomMessage('');
                           }
                         }}
                         expandedKeys={expandedKeys}
                         onToggle={(e) => setExpandedKeys(e.value)}
                         nodeTemplate={nodeTemplate}
+                        togglerTemplate={togglerTemplate}
                         className="w-full"
                         filter
                         filterPlaceholder="Search nodes..."

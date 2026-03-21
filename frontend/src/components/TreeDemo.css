@@ -28,8 +28,8 @@
     background-color: #dbeafe !important;
 }
 
-/* Simple toggle button */
-.p-tree .p-tree-toggler {
+/* Style for our custom toggle button */
+.custom-tree-toggler {
     width: 1.25rem !important;
     height: 1.25rem !important;
     margin-right: 0.375rem !important;
@@ -37,9 +37,13 @@
     background-color: transparent !important;
     border: none !important;
     color: #6b7280 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
 }
 
-.p-tree .p-tree-toggler:hover {
+.custom-tree-toggler:hover {
     background-color: #e5e7eb !important;
     color: #374151 !important;
 }
@@ -98,7 +102,7 @@
         padding: 0.25rem !important;
     }
     
-    .p-tree .p-tree-toggler {
+    .custom-tree-toggler {
         width: 1rem !important;
         height: 1rem !important;
     }
