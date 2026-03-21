@@ -16,21 +16,22 @@ interface TreeNode {
 }
 
 interface TreeDemoConfig {
-  // Button visibility controls
-  showExpandAllButton?: boolean;
-  showCollapseAllButton?: boolean;
+  // Title bar icon controls
+  showExpandAllIcon?: boolean;    // Show expand icon in title bar
+  showCollapseAllIcon?: boolean;  // Show collapse icon in title bar
   
-  // Icon configuration
-  usePlusMinusIcons?: boolean;
+  // Tree node icon configuration
+  usePlusMinusIcons?: boolean;    // Use plus/minus for node toggles
   
-  // Data configuration (future extensibility)
-  maxNodes?: number;
-  levels?: number;
-  
-  // UI configuration (future extensibility)
+  // UI configuration
   showFilter?: boolean;
   showNodeDetails?: boolean;
   showRandomMessage?: boolean;
+  
+  // Future extensibility
+  title?: string;                 // Custom panel title
+  iconSize?: 'small' | 'medium' | 'large';
+  iconColor?: string;
 }
 
 interface TreeDemoProps {
@@ -44,17 +45,79 @@ interface TreeDemoProps {
 
 // Default configuration
 const defaultConfig: TreeDemoConfig = {
-  showExpandAllButton: true,
-  showCollapseAllButton: true,
+  showExpandAllIcon: true,
+  showCollapseAllIcon: true,
   usePlusMinusIcons: true,
   showFilter: true,
   showNodeDetails: true,
-  showRandomMessage: true
+  showRandomMessage: true,
+  title: 'Config tree'
 };
 
 // Helper function to merge user config with defaults
 const mergeConfig = (userConfig?: Partial<TreeDemoConfig>): TreeDemoConfig => {
-  return { ...defaultConfig, ...userConfig };
+  const merged = { ...defaultConfig, ...userConfig };
+  
+  // Handle backward compatibility: map old property names to new ones
+  // This allows users to still use the old config properties
+  const anyConfig = userConfig as any;
+  if (anyConfig) {
+    if (anyConfig.showExpandAllButton !== undefined && merged.showExpandAllIcon === defaultConfig.showExpandAllIcon) {
+      merged.showExpandAllIcon = anyConfig.showExpandAllButton;
+    }
+    if (anyConfig.showCollapseAllButton !== undefined && merged.showCollapseAllIcon === defaultConfig.showCollapseAllIcon) {
+      merged.showCollapseAllIcon = anyConfig.showCollapseAllButton;
+    }
+  }
+  
+  return merged;
+};
+
+// Title bar component with icons
+interface TitleBarProps {
+  title: string;
+  showExpandIcon: boolean;
+  showCollapseIcon: boolean;
+  onExpandAll: () => void;
+  onCollapseAll: () => void;
+}
+
+const TitleBarWithIcons: React.FC<TitleBarProps> = ({
+  title,
+  showExpandIcon,
+  showCollapseIcon,
+  onExpandAll,
+  onCollapseAll
+}) => {
+  return (
+    <div className="flex justify-between items-center w-full">
+      {/* Title on left */}
+      <span className="font-semibold">{title}</span>
+      
+      {/* Icons on right */}
+      <div className="flex space-x-2">
+        {showExpandIcon && (
+          <button
+            onClick={onExpandAll}
+            className="title-bar-icon-btn"
+            title="Expand All"
+          >
+            <i className="pi pi-plus"></i>
+          </button>
+        )}
+        
+        {showCollapseIcon && (
+          <button
+            onClick={onCollapseAll}
+            className="title-bar-icon-btn"
+            title="Collapse All"
+          >
+            <i className="pi pi-minus"></i>
+          </button>
+        )}
+      </div>
+    </div>
+  );
 };
 
 const TreeDemo: React.FC<TreeDemoProps> = ({ 
@@ -69,6 +132,26 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
   const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>({});
   const [randomMessage, setRandomMessage] = useState<string>('');
+  
+  // Expand all nodes function
+  const handleExpandAll = () => {
+    const allKeys: { [key: string]: boolean } = {};
+    const expandAll = (nodeList: TreeNode[]) => {
+      nodeList.forEach(node => {
+        allKeys[node.key] = true;
+        if (node.children && node.children.length > 0) {
+          expandAll(node.children);
+        }
+      });
+    };
+    expandAll(nodes);
+    setExpandedKeys(allKeys);
+  };
+  
+  // Collapse all nodes function
+  const handleCollapseAll = () => {
+    setExpandedKeys({});
+  };
   
   // Generate dummy data with exactly 100 nodes across 3 levels
   const generateTreeData = (): TreeNode[] => {
@@ -311,7 +394,15 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
           {/* Left panel - Tree */}
           <SplitterPanel className="flex flex-col" size={60} minSize={30}>
             <Panel 
-              header="Config tree" 
+              header={
+                <TitleBarWithIcons
+                  title={config.title || 'Config tree'}
+                  showExpandIcon={config.showExpandAllIcon || false}
+                  showCollapseIcon={config.showCollapseAllIcon || false}
+                  onExpandAll={handleExpandAll}
+                  onCollapseAll={handleCollapseAll}
+                />
+              }
               className="h-full flex flex-column border-none"
               pt={{
                 content: { className: 'flex-grow-1' }
@@ -327,46 +418,6 @@ const TreeDemo: React.FC<TreeDemoProps> = ({
                   </div>
                 ) : (
                   <>
-                    {/* Conditional button rendering based on config */}
-                    {(config.showExpandAllButton || config.showCollapseAllButton) && (
-                      <div className="mb-4 flex justify-between items-center">
-                        <div>
-                          {config.showExpandAllButton && (
-                            <button 
-                              className="p-2 bg-blue-500 text-white rounded mr-2 hover:bg-blue-600"
-                              onClick={() => {
-                                // Expand all
-                                const allKeys: { [key: string]: boolean } = {};
-                                const expandAll = (nodeList: TreeNode[]) => {
-                                  nodeList.forEach(node => {
-                                    allKeys[node.key] = true;
-                                    if (node.children && node.children.length > 0) {
-                                      expandAll(node.children);
-                                    }
-                                  });
-                                };
-                                expandAll(nodes);
-                                setExpandedKeys(allKeys);
-                              }}
-                            >
-                              <i className="pi pi-plus mr-1"></i> Expand All
-                            </button>
-                          )}
-                          {config.showCollapseAllButton && (
-                            <button 
-                              className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                              onClick={() => setExpandedKeys({})}
-                            >
-                              <i className="pi pi-minus mr-1"></i> Collapse All
-                            </button>
-                          )}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {Object.keys(expandedKeys).length} nodes expanded
-                        </div>
-                      </div>
-                    )}
-                    
                     <div className="flex-1 overflow-auto">
                       <Tree 
                         value={nodes}

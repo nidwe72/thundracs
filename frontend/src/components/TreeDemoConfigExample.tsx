@@ -37,8 +37,8 @@ const TreeDemoConfigExample: React.FC = () => {
             <TreeDemo 
               onNodeSelect={handleNodeSelect}
               config={{
-                showExpandAllButton: false,
-                showCollapseAllButton: false,
+                showExpandAllIcon: false,
+                showCollapseAllIcon: false,
                 usePlusMinusIcons: false,
                 showFilter: true,
                 showNodeDetails: false,
@@ -48,7 +48,7 @@ const TreeDemoConfigExample: React.FC = () => {
           </div>
           <div className="mt-3 p-3 bg-gray-50 rounded">
             <code className="text-sm">
-              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllButton: false,\n    showCollapseAllButton: false,\n    usePlusMinusIcons: false,\n    showFilter: true,\n    showNodeDetails: false,\n    showRandomMessage: true\n  }}\n/>`}
+              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllIcon: false,\n    showCollapseAllIcon: false,\n    usePlusMinusIcons: false,\n    showFilter: true,\n    showNodeDetails: false,\n    showRandomMessage: true\n  }}\n/>`}
             </code>
           </div>
         </div>
@@ -63,8 +63,8 @@ const TreeDemoConfigExample: React.FC = () => {
             <TreeDemo 
               onNodeSelect={handleNodeSelect}
               config={{
-                showExpandAllButton: false,
-                showCollapseAllButton: false,
+                showExpandAllIcon: false,
+                showCollapseAllIcon: false,
                 usePlusMinusIcons: true,
                 showFilter: true,
                 showNodeDetails: false,
@@ -74,7 +74,7 @@ const TreeDemoConfigExample: React.FC = () => {
           </div>
           <div className="mt-3 p-3 bg-gray-50 rounded">
             <code className="text-sm">
-              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllButton: false,\n    showCollapseAllButton: false,\n    usePlusMinusIcons: true,\n    showFilter: true,\n    showNodeDetails: false,\n    showRandomMessage: false\n  }}\n/>`}
+              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllIcon: false,\n    showCollapseAllIcon: false,\n    usePlusMinusIcons: true,\n    showFilter: true,\n    showNodeDetails: false,\n    showRandomMessage: false\n  }}\n/>`}
             </code>
           </div>
         </div>
@@ -89,14 +89,14 @@ const TreeDemoConfigExample: React.FC = () => {
             <TreeDemo 
               onNodeSelect={handleNodeSelect}
               config={{
-                showExpandAllButton: false, // Only hide expand all button
+                showExpandAllIcon: false, // Only hide expand all icon
                 usePlusMinusIcons: false,   // Use default chevron icons
               }}
             />
           </div>
           <div className="mt-3 p-3 bg-gray-50 rounded">
             <code className="text-sm">
-              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllButton: false,\n    usePlusMinusIcons: false\n  }}\n/>`}
+              {`<TreeDemo \n  onNodeSelect={handleNodeSelect}\n  config={{\n    showExpandAllIcon: false,\n    usePlusMinusIcons: false\n  }}\n/>`}
             </code>
           </div>
         </div>
@@ -106,10 +106,11 @@ const TreeDemoConfigExample: React.FC = () => {
         <h3 className="font-semibold text-blue-800 mb-2">Configuration Options Summary:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h4 className="font-medium text-blue-700 mb-1">Button Controls:</h4>
+            <h4 className="font-medium text-blue-700 mb-1">Title Bar Icon Controls:</h4>
             <ul className="text-sm text-blue-600 space-y-1">
-              <li><code>showExpandAllButton</code>: Show/hide "Expand All" button (default: true)</li>
-              <li><code>showCollapseAllButton</code>: Show/hide "Collapse All" button (default: true)</li>
+              <li><code>showExpandAllIcon</code>: Show/hide "Expand All" icon in title bar (default: true)</li>
+              <li><code>showCollapseAllIcon</code>: Show/hide "Collapse All" icon in title bar (default: true)</li>
+              <li><code>title</code>: Custom panel title text (default: 'Config tree')</li>
             </ul>
           </div>
           <div>

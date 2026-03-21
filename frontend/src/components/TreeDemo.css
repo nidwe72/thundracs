@@ -48,6 +48,34 @@
     color: #374151 !important;
 }
 
+/* Title bar icon styling */
+.title-bar-icon-btn {
+    padding: 0.25rem !important;
+    border-radius: 0.25rem !important;
+    color: #6b7280 !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.title-bar-icon-btn:hover {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+}
+
+/* Panel header adjustments for title bar icons */
+.p-panel .p-panel-header {
+    padding: 1rem !important;
+}
+
+.p-panel .p-panel-header-content {
+    width: 100% !important;
+}
+
 /* Filter styling */
 .p-tree .p-tree-filter-container {
     margin-bottom: 0.75rem !important;
